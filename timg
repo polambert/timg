@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+from PIL import Image
+import os
+import sys
+
+if len(sys.argv) == 1:
+	print("Please provide an image.")
+	sys.exit(1)
+
+image = Image.open(sys.argv[1])
+
+image = image.convert("RGB")
+
+rows, cols = os.popen("stty size", "r").read().split()
+
+image_width, image_height = image.size
+
+WIDTH = int(cols)
+HEIGHT = int(rows) - 1
+
+inc_x = image_width // WIDTH 
+inc_y = image_height // HEIGHT
+
+
+for i in range(HEIGHT):
+	for j in range(WIDTH):
+		r, g, b = image.getpixel((j * inc_x, i * inc_y))
+
+		print("\x1b[48;2;{0};{1};{2}m ".format(r, g, b), end="")
+	print("\033[0m")
+
